@@ -1,0 +1,135 @@
+﻿@import "tailwindcss";
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    font-family: 'Poppins', sans-serif;
+    background-color: #121216;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a20;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #31313d;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00a3e0;
+}
+
+/* Geometric / Mesh Background */
+.breezy-bg {
+  background-color: #111115;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(0, 163, 224, 0.14) 0px, transparent 45%),
+    radial-gradient(at 100% 100%, rgba(0, 163, 224, 0.08) 0px, transparent 45%),
+    radial-gradient(at 50% 50%, rgba(18, 18, 25, 0.98) 0px, #0e0e12 100%);
+  background-attachment: fixed;
+}
+
+/* Subtle dot grid pattern */
+.dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Section Header Underline Accent */
+.section-heading {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 12px;
+}
+
+.section-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 42px;
+  height: 3px;
+  background: linear-gradient(90deg, #00a3e0, #04c2ea);
+  border-radius: 2px;
+  animation: lineExpand 0.4s ease-out forwards;
+}
+
+@keyframes lineExpand {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 42px;
+    opacity: 1;
+  }
+}
+
+/* Floating Navigation Tooltip */
+.nav-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.group:hover .nav-tooltip {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Timeline dot animation */
+.timeline-dot {
+  box-shadow: 0 0 0 4px rgba(0, 163, 224, 0.25);
+}
+
+/* Signature BreezyCV Page Change Animation */
+@keyframes breezyPageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.988);
+  }
+  60% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-breezy-enter {
+  animation: breezyPageEnter 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Smooth Fade In */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.35s ease-out forwards;
+}
