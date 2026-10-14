@@ -1,6 +1,6 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { portfolioData } from '../data/portfolioData';
-import { Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare, AlertCircle, Loader2 } from 'lucide-react';
 import { LinkedInIcon } from './icons/LinkedInIcon';
 
 export const ContactSection: React.FC = () => {
@@ -15,6 +15,7 @@ export const ContactSection: React.FC = () => {
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -25,16 +26,57 @@ export const ContactSection: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage(null);
+    setIsSubmitted(false);
 
-    // Simulate reliable dispatch
-    setTimeout(() => {
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY?.trim();
+
+    if (!accessKey) {
       setIsSubmitting(false);
-      setIsSubmitted(true);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    }, 800);
+      setErrorMessage(
+        'Web3Forms access key is not set in .env yet. Click below to send directly via your mail client, or add your key to .env.'
+      );
+      return;
+    }
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject || `Inquiry from ${formData.name} via Portfolio`,
+          message: formData.message,
+          from_name: `${formData.name} (Portfolio Inquiry)`,
+          botcheck: ''
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsSubmitted(true);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setErrorMessage(
+          data.message || 'Failed to send message. Please try again or open your email app.'
+        );
+      }
+    } catch {
+      setErrorMessage(
+        'Network error occurred while sending. Please try again or open your email app.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -132,11 +174,34 @@ export const ContactSection: React.FC = () => {
           {isSubmitted && (
             <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-3 text-sm animate-fade-in">
               <CheckCircle2 size={18} className="shrink-0" />
-              <span>Thank you! Your message has been sent successfully. I will get back to you shortly.</span>
+              <span>Thank you! Your message has been sent successfully to Prachi Pathak. I will get back to you shortly.</span>
+            </div>
+          )}
+
+          {errorMessage && (
+            <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm animate-fade-in">
+              <div className="flex items-start sm:items-center gap-2.5">
+                <AlertCircle size={18} className="shrink-0 text-amber-400 mt-0.5 sm:mt-0" />
+                <span>{errorMessage}</span>
+              </div>
+              <a
+                href={`mailto:${personal.email}?subject=${encodeURIComponent(
+                  formData.subject || 'Portfolio Inquiry'
+                )}&body=${encodeURIComponent(
+                  `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+                )}`}
+                className="shrink-0 px-3.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-white font-medium transition-colors text-center inline-flex items-center justify-center gap-1.5 self-start sm:self-auto"
+              >
+                <Mail size={14} />
+                <span>Open in Mail App</span>
+              </a>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Honeypot for spam protection */}
+            <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[#8b8b9c] uppercase mb-1.5">
@@ -202,10 +267,19 @@ export const ContactSection: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-7 py-3 rounded-full bg-[#00a3e0] text-white font-medium text-sm hover:bg-[#008fca] transition-all duration-300 shadow-lg shadow-[#00a3e0]/25 flex items-center gap-2 disabled:opacity-50"
+              className="px-7 py-3 rounded-full bg-[#00a3e0] text-white font-medium text-sm hover:bg-[#008fca] transition-all duration-300 shadow-lg shadow-[#00a3e0]/25 flex items-center gap-2 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
             >
-              <Send size={16} />
-              <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  <span>Sending Message...</span>
+                </>
+              ) : (
+                <>
+                  <Send size={16} />
+                  <span>Send Message</span>
+                </>
+              )}
             </button>
           </form>
         </div>
