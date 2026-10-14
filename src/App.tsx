@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { FloatingNav } from './components/FloatingNav';
 import { MobileNav } from './components/MobileNav';
@@ -48,12 +48,12 @@ export default function App() {
   }, [activeTab]);
 
   return (
-    <div className="min-h-screen breezy-bg dot-pattern text-[#d5d5d5] flex flex-col justify-center items-center py-0 lg:py-8 px-0 sm:px-4 lg:px-12 xl:px-16 relative selection:bg-[#00a3e0] selection:text-white">
+    <div className="min-h-screen breezy-bg dot-pattern text-[#d5d5d5] flex flex-col justify-center items-center py-0 lg:py-4 xl:py-6 px-0 sm:px-4 lg:px-10 xl:px-16 relative selection:bg-[#00a3e0] selection:text-white">
       {/* Mobile Header Bar */}
       <MobileNav activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Main BreezyCV Card Container */}
-      <main className="w-full max-w-[1240px] xl:max-w-[1320px] min-h-screen lg:min-h-[640px] lg:h-[88vh] lg:max-h-[920px] bg-[#222227] lg:rounded-[32px] border-0 lg:border border-[#343440] shadow-[0_20px_80px_-15px_rgba(0,0,0,0.8)] flex flex-col lg:flex-row overflow-hidden relative">
+      <main className="w-full max-w-[1240px] xl:max-w-[1320px] min-h-screen lg:min-h-[650px] lg:h-[90vh] lg:max-h-[920px] bg-[#222227] lg:rounded-[32px] border-0 lg:border border-[#343440] shadow-[0_20px_80px_-15px_rgba(0,0,0,0.8)] flex flex-col lg:flex-row overflow-hidden relative">
         {/* Left Profile Sidebar - Remains permanently sticky/visible */}
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
