@@ -32,7 +32,9 @@ export const ContactSection: React.FC = () => {
     setErrorMessage(null);
     setIsSubmitted(false);
 
-    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY?.trim();
+    const accessKey =
+      import.meta.env.VITE_WEB3FORMS_ACCESS_KEY?.trim() ||
+      '2e39d072-5daf-4fdf-9768-11e5ef386f14';
 
     if (!accessKey) {
       setIsSubmitting(false);
